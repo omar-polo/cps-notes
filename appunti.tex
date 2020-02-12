@@ -1,0 +1,1005 @@
+\documentclass[11pt,a4paper,twoside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{xfrac}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[italian]{babel}
+
+\pagestyle{headings}
+
+% solo nel caso mi decida a mettere il testo in doppia colonna:
+%\usepackage[top=60pt,bottom=40pt,left=20pt,right=20pt]{geometry}
+
+\setlength{\columnsep}{20pt}
+
+\newtheorem{definition}{Definizione}
+\newtheorem{theorem}{Teorema}
+\newtheorem{corollary}{Corollario}[theorem]
+\newtheorem{ex}{Esempio}
+
+% in questo modo \emptyset diventa un (bel) simbolo per l'insieme
+% vuoto.
+\let\emptyset\varnothing%
+
+% stessa storia per epsilon e varepsilon
+\let\epsilon\varepsilon%
+
+% idem per i confronti
+\let\leq\leqslant%
+\let\geq\geqslant%
+
+% per avere il font \mathbbm, che ci permette di avere un \R più bello
+% del `semplice' \mathbb
+\usepackage{bbm}
+
+\newcommand\N{\mathbb{N}}
+\newcommand\R{\mathbbm{R}}
+\newcommand\B{\mathcal{B}}
+\newcommand\F{\mathcal{F}}
+\newcommand\D{\mathcal{D}}
+
+% per gli integrali, aggiunge un po' di spazio prima del `dx' o del
+% `dy'.
+\newcommand\dx{\,dx}
+\newcommand\dy{\,dy}
+\newcommand\du{\,du}
+\newcommand\dt{\,dt}
+
+% Cebyshev è un nome che non posso scrivere con la mia tastiera
+\newcommand\Cebyshev{\v Cebyshev}
+
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\E}{E}
+%\DeclareMathOperator{\exp}{exp}
+
+% Funzione di Sopravvivenza
+\newcommand\FS{\bar{F}}
+
+\usepackage{mathtools}
+
+% definisci \floor, \floor*, \ceil e \ceil
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}%
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% augmenta \abs e \norm
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+% inverti la definizione di \abs* e \norm* in modo che \abs e \norm
+% cambino la dimensione delle parentesi e la versione con * no.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+\author{Omar Polo}
+\date{\today}
+\title{Appunti di CPS}
+
+\usepackage{hyperref}
+\hypersetup{
+  pdfauthor={Omar Polo},
+  pdftitle={Appunti di CPS},
+  pdfkeywords={appunti,statistica,probabilità},
+  pdfsubject={},
+  pdfcreator={pdflatex},
+  pdflang={Italian}
+}
+
+% nessun rientro per i paragrafi, ma un maggior spazio verticale
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.5em}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+
+\section{Parti mancanti}
+\begin{itemize}
+\item capitoli \([1, 5]\)
+\item capitolo 13: ``Leggi di v.c.\ trasformate''
+\item capitolo 15:
+  \begin{itemize}
+  \item indici di posizione e variabilità per v.c.\ multivariate
+  \item varianza di una combinazione lineare
+  \item varianza di correlazione lineare
+  \end{itemize}
+\end{itemize}
+
+\section{Variabili casuali}
+
+\subsection{Nel Discreto}
+
+\subsubsection{Bivariate con legge discreta}
+
+Una v.c.\ bivariata con legge discreta è definita da:
+\begin{itemize}
+\item il supporto congiunto \(S_{X,Y} = \{ (x_i,y_i) \in \R^2, i\in I
+  \subseteq \N \}\) successione finita o numerabile di punti distinti
+  in \(\R^2\) senza punti di accumulazione all'infinito.
+\item la f.m.p\ congiunta \(p_{X,Y} : S_{X,Y}\rightarrow [0,1]\)
+\end{itemize}
+
+La legge congiunta della v.c.\ \((X,Y)\) è allora, per ogni
+\(B\in\B_2\) data da:
+\begin{equation}\label{eq:legge-congiunta-bivariate}
+  P_{X,Y}(B) = P((X,Y) \in B) = \sum_{(x,y)\in B\cap S_{X,Y}} p_{X,Y}(x,y)
+\end{equation}
+
+\paragraph{Leggi marginali}
+Da una v.c.\ bivariata con legge discreta \((X,Y)\) specificata da
+\(S_{X,Y}\) e \(p_{X,Y}(x, y)\) si possono ``estrarre'' varie leggi di
+v.c.\ univariata. Anzitutto conviene considerare le leggi delle
+componenti \(X\) e \(Y\), dette \textbf{leggi marginali}.
+
+La legge marginale di \(X\) ha:
+\begin{itemize}
+\item supporto marginale
+  \[ S_X = {x\in\R : (x,y) \in S_{X,Y}\mbox{ per qualche } y\in\R} \]
+\item f.m.p.\ marginale
+  \[
+    p_X(x) = P(X=x) = \sum_{y:(x,y}\in S_{X,Y} p_{X,Y}(x,y), \mbox{
+      per } x\in S_X .
+  \]
+\end{itemize}
+
+Similmente si può ottenere la legge marginale di \(Y\) in modo del
+tutto simmetrico.
+
+\paragraph{Leggi condizionali}
+Data una v.c.\ bivariata con legge discreta \((X,Y)\) si possono
+``estrarre'' anche due famiglie di leggi condizionali: la
+\textbf{legge condizionale di \(Y\) dato un valore osservabile di
+  \(X\)} indicata con \(Y|X=x, x\in S_X\):
+\begin{itemize}
+\item supporto condizionale
+  \[ S_{Y|X=x} = { y\in\R : (x,y) \in S_{X,Y} } \]
+\item f.m.p.\ condizionale
+  \begin{align*}
+      P_{Y|X=x}(y) &= P(Y=y| X=x) = \frac{P(X=x, Y=y)}{P(X=x)} \\
+                   &= \frac{p_{X,Y}(x,y)}{p_X(x)} \quad\mbox{per } y\in S_{Y|X=x} .
+  \end{align*}
+\end{itemize}
+e la legge condizionale di \(X\) dato un valore osservabile di \(Y\)
+che si deduce in modo del tutto analogo.
+
+\paragraph{Componenti indipendenti e dipendenti}
+\begin{definition}
+  La v.c.\ con legge discreta \((X,Y)\) si dice con componenti
+  indipendenti se
+  \[ S_{X,Y} = S_X \times S_Y \]
+  e se per ogni \((x,y)\in S_{X,Y}\) si ha
+  \[ p_{X,Y}(x,y) = p_X(x) p_Y(y) . \]
+\end{definition}
+
+Se invece le componenti di \(X\) e \(Y\) di \((X,Y)\) non sono
+indipendenti si dice che la v.c.\ ha componenti dipendenti.
+\subsection{Nel Continuo}
+
+\subsubsection{Supporto di una v.c.\ con legge continua}
+Il supporto \(S_X\) di una v.c.\ univariata \(X\) con legge continua è
+il più piccolo sottoinsieme chiuso di \(\R\) al quale \(P_X\) da
+probabilità 1. Si ricorda che un insieme è chiuso se contiene tutti i
+suoi punti di accumulazione.  Quindi \(S_X\in\B_1\) è tale che
+\begin{enumerate}
+\item \(S_X\) è chiuso
+\item \(S_X \subseteq C\) per ogni \(C\subseteq \R\) chiuso con
+  \(P_X(C) = P(X\in C) = 1\)
+\end{enumerate}
+
+In altre parole, \(S_X\) è la chiusura dell'insieme \({ x\in\R :
+  p_X(x) > 0 }\).  Si ricorda che la chiusura di un insieme numerico è
+l'unione fra l'insieme stesso e i punti non dell'insieme che sono però
+suoi punti di accumulazione.
+
+\subsubsection{Bivariate con legge continua}
+\((X,Y)\) è una v.c.\ bivariata con legge continua se per ogni
+\(B\in\B_2\), con \(B = [a_1,b_1]\times [a_2,b_2]\), si ha:
+\begin{align*}
+  P_{(X,Y)}(B) &= P((X,Y)\in B) \\
+               &= P(a_1 \leq X \leq b_1, a_2\leq Y\leq b_2) \\
+               % `iint' è il doppio-integrale, \int\int non va
+               % bene. certe volte LaTeX è proprio strano, cosa mi hai
+               % combinato, Lamport??
+               &= \iint_B p_{(X,Y)}(x,y)\dx\dy
+\end{align*}
+dove \(p_{X,Y}(x,y)\) ha le proprietà di
+\begin{itemize}
+\item non negatività, per ogni \((x,y) \in \R^2\)
+\item normalizzazione: \(\iint_{\R^2} p_{X,Y}(x,y) \dx\dy = 1\).
+\end{itemize}
+
+Per una v.c.\ con legge continua vale che \(P(X=x, Y=y)\) sia zero
+per ogni \((x,y)\in\R^2\) e che \(S_{X,Y}\) sia la chiusura
+di \(\{ (x,y)\in\R^2 \mid p_{X,Y} (x,y) > 0 \}\).
+
+Come nel caso discreto, si possono ottenere le leggi univariate
+indotte, che saranno di tipo continuo:
+\begin{itemize}
+\item marginale di \(X\) con f.d.p.
+  \[ p_X(x) = \int_{-\infty}^{+\infty}p_{X,Y}(x,y)\dy \]
+\item marginale di \(Y\) con f.d.p.
+  \[ p_Y(y) = \int_{-\infty}^{+\infty}p_{X,Y}(x,y)\dx \]
+\item condizionale \(Y|X=x, x\in S_X\) con f.d.p.
+  \[ p_{Y|X=x}(y) = \frac{p_{X,Y}(x,y)}{p_X(x)} \]
+\item condizionale \(X|Y=y, y\in S_Y\) con f.d.p.
+  \[ p_{X|Y=y}(x) = \frac{p_{X,Y}(x,y)}{p_Y(y)} \]
+\end{itemize}
+
+Infine, i supporti si ottengono con le identiche formule del caso
+discreto:
+\begin{align*}
+  S_X      &= \{ x\in\R\mid (x,y)\in S_{X,Y} \mbox{ per qualche } y \} \\
+  S_Y      &= \{ y\in\R\mid (x,y)\in S_{X,Y} \mbox{ per qualche } x \} \\
+  S_{Y|X=x} &= \{ x\in\R\mid (x,y)\in S_{X,Y} \} \\
+  S_{X|Y=y} &= \{ y\in\R\mid (x,y)\in S_{X,Y} \} \\
+\end{align*}
+
+\paragraph{Componenti indipendenti}
+In modo del tutto analogo al caso continuo, si dice che una v.c.\
+bivariata \((X,Y)\) con legge continua ha componenti indipendenti se
+per ogni \((x,y)\in\R^2\) vale che
+\[ p_{X,Y}(x,y) = p_X(x) p_Y(y). \]
+
+\section{Indici di posizione}
+
+\subsection{Moda}
+\begin{definition}
+  Sia \(X\) una v.c.\ con legge discreta o continua e f.m.p./f.d.p.\
+  \(p_X(x)\).  Si dice \textbf{moda} di \(X\), indicata con
+  \(x_{mo}\), un valore del supporto di \(X\) per cui
+  \[
+    p_X(x_{mo}) \geq p_X(x) \quad \forall x\in S_X
+  \]
+  
+  Nel caso del continuo si richiede inoltre che la densità di \(X\)
+  sia continua almeno da destra o da sinistra in \(x_{mo}\).
+\end{definition}
+
+\subsection{Mediana}
+\begin{definition}
+  Sia \(X\) una v.c.\ univariata con f.r.\ \(F_X(x)\). Si dice
+  \textbf{mediana} di \(X\), indicata con \(x_{0.5}\), un valore reale
+  tale che valgano simultaneamente
+  \[
+    P(X \leq x_{0.5}) \geq 0.5
+    \quad\mbox{e}\quad
+    P(X \geq x_{0.5}) \geq 0.5
+  \]
+\end{definition}
+
+La mediana non è necessariamente unica. Tutte le soluzioni
+dell'equazione \(F_X(x) = 0.5\) sono mediane di \(X\). Se invece
+l'equazione non ha soluzioni, la mediana di \(X\) è unica e risulta
+essere il più piccolo valore di \(x\) per cui \(F_X(x) \geq 0.5\).
+
+\subsection{Quantile-\(p\)}
+\begin{definition}
+  Sia \(X\) una v.c.\ univariata con f.r.\ \(F_X(x)\).  Per \(p\in
+  (0,1)\) si dice \textbf{quantile}-\(p\) di \(X\), indicato con
+  \(x_p\), un valore reale tale che valgano simultaneamente:
+  \[
+    P(X \leq x_P) \geq p
+    \quad\mbox{e}\quad
+    P(X \geq X_p) \geq 1 - p.
+  \]
+\end{definition}
+
+Si tratta di una generalizzazione del concetto di mediana, infatti la
+mediana è anche detta quantile-0.5.
+
+Come la mediana, anche il quantile-\(p\) non è necessariamente unico.
+
+\subsection{Valore atteso}
+Il valore atteso \(\E(X)\) è la media aritmetica ponderata dei valori
+assumibili dalla v.c.\ con pesi dati dalla f.m.p. Se la variabile ha
+supporto continuo, la ponderazione è data dalla f.d.p.\ e la somma
+viene intesa in senso continuo, ovvero come un integrale.
+
+\(\E(X)\) è quindi definita come
+\[
+  \E(X) = \begin{dcases}
+    \sum_{x\in S_X} x p_X(x) &\mbox{se \(X\) ha legge discreta} \\
+    \int_{-\infty}^{+\infty} x p_X(x) \dx &\mbox{se \(X\) ha legge continua}
+  \end{dcases}
+\]
+
+Si richiede che la somma (o l'integrale) convergano assolutamente,
+quindi:
+\[
+  \sum_{x\in S_X} \abs{x} p_X(x) < +\infty \quad\mbox{oppure}\quad
+  \int_{-\infty}^{+\infty}\abs{x} p_X(x) dx < +\infty
+\]
+
+\subsubsection{Proprietà del valore atteso}
+
+\paragraph{Valore atteso di trasformate} Siano \(X\) e \(Y\) v.c.\
+univariate con \(Y = g(X)\), allora vale che
+\[
+  \E(Y) = \E(g(X)) = \begin{dcases}
+    \sum_{x\in S_X} g(x) p_X(x) &\mbox{se \(X\) ha legge discreta} \\
+    \int_{-\infty}^{+\infty} g(x) p_X(x) \dx &\mbox{se \(X\) ha legge continua}
+  \end{dcases}
+\]
+
+\paragraph{Valore atteso del prodotto di v.c.\ indipendenti}
+Sia \(X = (X_1, \dots, X_d)\) una v.c.\ con componenti indipendenti,
+allora
+\[
+  \E(X_1, \dots, X_d) = \prod_{i=1}^d \E(X_i)
+\]
+
+\paragraph{Proprietà di Cauchy} Quando esiste finito, il valore atteso
+può non essere un punto del supporto di \(X\), ma e sempre intermedio
+fra i punti del supporto.  Supponendo, senza perdita di generalità che
+\(S_X = \{ x_1, \dots, x_k \}\)
+\[
+  x_1 < x_2 < \cdots < x_k
+\]
+si ha
+\[
+  x_1 \leq x_i \leq x_k \quad \forall i \in \{1, 2, \dots, k\}
+\]
+e quindi
+\[
+  x_1 p_X(x_i) \leq x_i p_X(x_i) \leq x_k p_X(x_i)
+  \quad\forall i \in \{1, 2, \dots, k\}.
+\]
+
+Sommando le diseguaglianze si ottiene
+\[
+  x_1 \sum_{i=1}^k p_X(x_i) \leq \sum_{i=1}^k x_i p_X(x_i) \leq x_k
+  \sum_{i=1}^k p_X(x_i)
+\]
+da cui, per la normalizzazione, si ottiene
+\[
+  x_1 \leq \E(X) \leq x_k .
+\]
+
+\paragraph{Proprietà di linearità} Siano \(X\) e \(Y\) v.c.\
+univariate con \(Y = aX + b\), allora
+\[
+  \E(Y) = \E(aX + b) = a\E(X) + b.
+\]
+
+\paragraph{Proprietà di linearità generalizzata} Se \((X, Y)\) è una
+v.c.\ bivariata e \(T = aX + bY\) una combinazione lineare delle
+componenti di \((X, Y)\) con \(a, b \in \R\), allora
+\[
+  \E(t) = \E(aX + bY) = a\E(X) + b\E(Y).
+\]
+
+\paragraph{Proprietà del baricentro} Si tratta di un caso particolare
+della linearità
+\[
+  \E(X - \E(X)) = 0.
+\]
+
+\paragraph{Proprietà dei minimi quadrati} Se \(X\) è una v.c.\
+univariata e i valori attesi indicati esistono, allora per ogni
+\(c\in\R\)
+\[
+  \E\left( (X-c)^2 \right) \geq \E\left( (X - \E(X))^2 \right)
+\]
+dove
+\begin{itemize}
+\item \(c\) è una predizione puntuale della realizzazione futura di
+  \(X\)
+\item \(X-c\) è l'errore di predizione
+\item \( (X-c)^2 \) è la perdita quadratica dovuta all'errore di
+  predizione
+\item \(\E((X-c)^2)\) è la perdita quadratica media, detta rischio quadratico
+\end{itemize}
+
+\section{Indici di variabilità}
+Sia \(X\) una v.c.\ univariata con legge discreta e supporto finito.
+Si possono cogliere aspetti importanti della distribuzione di \(X\)
+attraverso indici sintetici.
+
+\subsection{Varianza}
+L'indice di variabilità principale, la varianza di \(X\), è definito
+come la media aritmetica ponderata del quadrato degli scarti di \(X\)
+dal proprio valore atteso.
+\[
+  \Var(X) = \E\left( (X - \E(X))^2 \right) = \begin{dcases}
+    \sum_{x\in S_X}{(x - \E(X))}^2 p_X(x) & \mbox{legge continua} \\
+    \int_{-\infty}^{+\infty} {(x - E(X))}^2 p_X(x) \dx & \mbox{legge
+      discreta}
+  \end{dcases}
+\]
+
+\subsubsection{Proprietà}
+
+\paragraph{Non negatività} Per ogni \(X\) con varianza finita
+\(Var(X)\geq 0\).  \(\Var(X) = 0\) solo per \(X\sim \D(x_0)\).
+
+\paragraph{Formula per il calcolo}
+\[
+  \Var(X) = \E(X^2) - ( \E(X) )^2
+\]
+
+\paragraph{Invarianza rispetto a traslazioni}
+\[
+  \Var(X+b) = \Var(X) .
+\]
+
+\paragraph{Omogeneità di secondo grado}
+\[
+  \Var(aX) = a^2 \Var(X).
+\]
+
+\subsection{Scarto quadratico medio}
+
+Lo scarto quadratico medio, o deviazione standard, è definito come la
+radice quadrata aritmetica della varianza.  In simboli
+\[
+  \sigma_X = \sqrt{\Var(x)}
+\]
+
+\subsection{Range}
+
+Il \textit{range} di una v.c.\ univariata \(X\), indicato con \(R_X\)
+è definito per variabili con supporto limitato come
+\[
+  R_X = \max(S_X) - \min(S_X)
+\].
+
+\subsection{Scarto interquantilico}
+Lo scarto interquantilico di una v.c.\ univariata \(X\), indicato con
+\(IQR_X\) è definito come
+\[
+  IQR_X = x_{0.75} - x_{0.25}
+\]
+
+\subsection{Diseguaglianze di Markov e \Cebyshev}
+\begin{theorem}[Diseguaglianza di Markov]
+  Sia \(X\) una v.c.\ non negativa con valore atteso \(\mu = \E(X) >
+  0\) finito.  Allora per ogni \(c > 0\) vale
+  \[
+    P(X \geq c \mu) \leq \frac 1{c}.
+  \]
+\end{theorem}
+
+\begin{theorem}[Diseguaglianza di \Cebyshev]
+  Sia \(X\) una v.c.\ univariata con valore atteso \(\mu = \E(X)\)
+  finito e varianza \(\sigma^2 = \Var(X) > 0\) anch'essa
+  finita. Allora, per ogni \(k > 0\) vale
+  \[
+    P(\abs{X - \mu} \geq k \sigma) \leq \frac 1{k^2} .
+  \]
+\end{theorem}
+
+Entrambe le diseguaglianze sono poco informative per \(c \in
+\left(0,1\right]\) o \(k \in \left(0,1\right] \), ma diventano molto
+informative negli altri casi.
+
+\subsection{Covarianza}
+La covarianza è un indice sintetico della dipendenza delle componenti
+di una v.c.\ bivariata. Se indichiamo il supporto come successione
+dipendente di due indici:
+\[
+  S_{X,Y} = { (x_i,y_i) \quad i\in I, j \in J }
+  \mbox{ con \(I\) e \(J\) finiti o numerabili}
+\]
+ed esprimere la f.m.p.\ in forma abbreviata come applicazione:
+\[
+  (x_i,y_i) \rightarrow p_{ij} = P(X=x_i, Y=y_i).
+\]
+Allora la covarianza, indicata con il simbolo \(\Cov(X,Y)\), è
+definita come media ponderata del prodotto di scarti:
+\begin{align*}
+  \Cov(X,Y) &= \sum_{i\in I} \sum_{i\in J} (x_i -
+              \E(X))(y_i-\E(Y))p_{ij} \\
+            &= \E((X-\E(X)))(Y-\E(Y))
+\end{align*}
+
+Per il calcolo della covarianza è nota una formula per il calcolo
+analoga a quella che si usa per la varianza
+\[
+  \Cov(X,Y) = \E(XY) - \E(X)\E(Y) .
+\]
+
+\section{Funzione di ripartizione e di sopravvivenza}
+\begin{definition}
+  Si dice \textbf{funzione di ripartizione} di \(X = (X_1,\dots,X_d)\)
+  la funzione
+  \[ F_X : \R^d\to [0,1] \]
+  che a ciascun punto \(x = (x_1,\dots,x_d)\) di \(\R^d\) fa
+  corrispondere il valore d'immagine
+  \begin{align*}
+    F_X(x) &= P(X_1\leq x_1, \dots, X_d \leq x_d) \\
+           &= P_X((-\infty, x_1], \times\cdots\times (-\infty, x_d]) \\
+           &= P(\cap_{i=1}^d \{ s\in S \mid X_i(s) \leq x_i \}).
+  \end{align*}
+\end{definition}
+
+Se \(X\) ha componenti indipendenti, per ogni \(x\in\R^d\) vale la
+relazione
+\[
+  F_X(x) = F_{X_1,\dots,X_d} (x_1, \dots, x_d) = \prod_{i=1}^d F_{X_i}(x_i)
+\]
+
+\begin{theorem}[Proprietà strutturali]\label{th:proprietà-strutturali}
+  Sia \(X\) una v.c.\ univariata con legge qualsiasi.  La funzione di
+  ripartizione \(F_X(x)\) e una applicazione \(F_X : \R\to [0,1]\) che
+  gode delle seguenti proprietà:
+  \begin{itemize}
+  \item è monotona non decrescente
+    \[ x_1 < x_2 \Rightarrow F_X(x_1) \leq F_X(x_2) \]
+  \item è continua da destra in ogni punto \(x\in\R\)
+    \[ \forall x\in\R \quad \lim_{\epsilon\to 0^+} F_X(x+\epsilon) = F_X(x) \]
+  \item i limiti agli estremi del dominio sono zero ed uno:
+    \begin{align*}
+      \lim_{x\to -\infty} F_X(x) = 0 \\
+      \lim_{x\to +\infty} F_X(x) = 1
+    \end{align*}
+  \end{itemize}
+\end{theorem}
+
+\begin{theorem}[Caratterizzazione]\label{teorema-di-caratterizzazione}
+  Se \(F : \R\to[0,1]\) ha le proprietà 1, 2 e 3 del
+  Teorema~\ref{th:proprietà-strutturali} allora esiste una v.c.\
+  univariata \(X\) con legge di probabilità \(P_X\) di cui \(F\) ne è
+  la funzione di ripartizione.
+\end{theorem}
+
+\subsection{Caso univariato}
+Se \(X\) è una v.c.\ univariata la sua \(F_X(x)\) permette di
+calcolare agevolmente le probabilità degli intervalli.
+\[
+  P(a < X \leq b) = F_X(b) - F_X(a) \quad\mbox{con } a < b
+\]
+
+\paragraph{Funzione di sopravvivenza} La funzione \(P(X>x)\) viene
+detta funzione di sopravvivenza di \(X\)
+\[
+  P(X>x) = 1 - P(X\leq X) = 1 - F_X(x).
+\]
+
+\paragraph{Dalla \(p_X(x)\) alla \(F_X(x)\)} Sia \(X\) una v.c.\
+univariata.  Dalla definizione si ha subito che
+\[
+  F_X(x) = P(X\leq x) = \begin{cases}
+    \sum_{t\in S_X \mid t\leq x} p_X(t) & \mbox{se \(X\) ha legge discreta} \\
+    \int_{-\infty}^x p_X(t) dt & \mbox{se \(X\) ha legge continua}
+  \end{cases}
+\]
+
+Si possono quindi fare le seguenti osservazioni:
+\begin{itemize}
+\item se \(X\) ha legge discreta univariata, la \(F_X(x)\) è costante
+  a tratti, con punti di salto posizionati ai punti del supporto, e
+  con valore del salto pari alla massa di probabilità posta sul punto;
+\item se \(X\) ha legge continua, la sua funzione di ripartizione è
+  una funzione continua di \(x\in\R\), in quanto primitiva di una
+  funzione integrabile.
+\end{itemize}
+
+Le varie \(F_X(x)\) calcolate verranno mostrate nelle sezioni delle
+leggi.
+
+\paragraph{Dalla \(F_X(x)\) alla funzione di massa di probabilità}
+Data la \(F_X(x)\) di una v.c.\ discreta \(X\) si può recuperare il
+supporto come insieme dei punti di salto
+\[
+  S_X = \{ x\in\R \mid F_X(x) - \lim_{\epsilon\to 0+}F_X(x-\epsilon)>0 \}
+\]
+da cui poi dedurre
+\[
+  p_X(x) = P(X = x) = \lim_{\epsilon\to 0^+} P(x-\epsilon < X \leq x)
+  = F_X(x) - \lim_{\epsilon\to 0^+} F_X(x-\epsilon)
+\]
+
+\paragraph{Dalla \(F_X(x)\) alla funzione di densità di probabilità}
+Nei punti \(x\) in cui \(p_X(x)\) è continua, la \(F_X(x)\) è
+derivabile e vale
+\[
+  p_X(x) = \frac{d}{dx}F_X(x).
+\]
+
+\section{Leggi di tipo discreto}
+Le leggi discrete sono in generale individuate da due ingredienti:
+\begin{enumerate}
+\item un insieme senza punti di accumulazione al finito
+  \[
+    S_X = \cup_{x\in I}{x_i}, \quad x_i\in\R^d,\quad i\in I\subseteq \N^+
+  \]
+  detto \textbf{supporto} della variabile casuale.  
+\item una applicazione
+  \[
+    p_X : S_X \rightarrow [0, 1]
+  \]
+  detta \textbf{funzione di massa di probabilità} che soddisfi le
+  condizioni:
+  \begin{itemize}
+  \item \(p_X(x) > 0\) per ogni \(x\in S_x\)
+  \item \(\sum_{x\in S_x} p_X(x) = 1\)
+  \end{itemize}
+\end{enumerate}
+
+Dato il supporto e la funzione massa di probabilità, la legge discreta
+corrispondente è definita da
+\[
+  P_X(B) = P(X\in B) = \sum_{x\in S_X \cap B} p_X(x).
+\]
+
+\subsection{Leggi degeneri}
+Si dice che una v.c. \(d\)-variata \(X\) ha legge degenere in
+\(x_0\in \R^d\), valore prefissato, e si scrive \(X\sim \D(x_0)\) se
+per \(B\in\B_d\) la legge di probabilità di \(X\) è
+\[
+  P_X(B) = P(X\in B) = \begin{cases}
+    1 & \mbox{se } x_0\in B \\
+    0 & \mbox{se } x_0 \not\in B .
+  \end{cases}
+\]
+
+Alcuni risultati noti:
+\[
+  F_X(x) = \begin{cases}
+    0 & \mbox{se } x < x_0 \\
+    1 & \mbox{se } x \geq x_0
+  \end{cases}
+\]
+
+\subsection{Leggi binomiali}
+Si dice che la v.c.\ univariata \(X\) ha legge binomiale con indice
+\(n \in \N^+\) e parametro \(p\in (0,1)\), e si scrive \(X\sim Bi(n,
+p)\), se per ogni \(B \in \B_1\) vale
+\[
+  P_X(B) = P(X\in B) = \sum_{x\in\{0,1,\dots,n\}\cap B} {n\choose x}p^x(1-p)^{n-x}.
+\]
+
+Quando \(n = 1\) le leggi binomiali sono dette di \textbf{di
+  Bernoulli} o \textbf{binomiali elementari}.
+
+Alcuni risultati noti:
+\[
+  F_X(x) = \begin{cases}
+    0   & \mbox{se } x < 0 \\
+    1-p & \mbox{se } 0\geq x < 1 \\
+    1   & \mbox{se } x\geq 1
+  \end{cases}\qquad\mbox{supponendo } X\sim Bi(1, p)
+\]
+
+\subsection{Leggi uniformi discrete}
+La v.c.\ \(d\)-variata \(X\) ha legge uniforme discreta in \(D =
+\cup_{i=1}^k{x_i}, x_i\in \R^d\) dove gli \(x_i\) sono \(k\) punti
+distinti, e si scrive in breve \(X\sim Ud(X_1,\dots, x_k)\) se
+\begin{itemize}
+\item \(S_X = D\)
+\item \(p_X(
+  x) = \sfrac{1}{k}\) per ogni \(x \in S_X\).
+\end{itemize}
+
+\subsection{Leggi ipergeometriche}
+Si dice che la v.c.\ univariata \(X\) ha legge ipergeometrica con
+indice \(n\in\N^+\) e parametri \(N\) e \(D\), dove \(n\leq N \in
+N^+\) e \(D\in N^+\) con \(D\leq N\), e si scrive in breve \(X\sim
+IG(n; D, N)\) se vale
+\[
+  P_X(\{x\}) = P(X=x) = \frac{{D\choose x} {N-D\choose n-x}}{{N\choose n}}
+\]
+per tutti i valori \(x\) per cui hanno senso i coefficienti binomiali
+e 0 altrimenti.  Usando il simbolo \(S_x\) per i valori di \(x\) per
+cui \(P(X = x) > 0\) le leggi \(P_X\) ipergeometriche sono tali che
+per ogni \(B\in\B_1\)
+\[
+  P_X(B) = P(X\in B) = \sum_{x\in S_x\cap B} \frac{{D\choose x} {N-D\choose n-x}}{{N\choose n}}
+\]
+
+\subsection{Leggi di Poisson}
+
+\begin{definition}
+  Si dice che \(X\) ha legge di Poisson con parametro \(\lambda > 0\) e
+  si scrive \(X\sim P(\lambda)\) se è una v.c.\ univariata con legge
+  discreta con supporto \(S_X = \N\) e f.m.p.\ per \(x\in S_X\) pari a
+  \[
+    p_X(x) = e^{-\lambda} \frac{\lambda^x}{x!} .
+  \]
+\end{definition}
+
+Per verificare che si tratti di una buona definizione occorre
+controllare le solite due condizioni:
+\begin{itemize}
+\item la positività di \(p_X(x)\) sul supporto \(S_X = \N\) è banale
+  perché \(p_X(x)\) è il prodotto di tre fattori positivi.
+\item la normalizzazione segue da
+  \begin{align*}
+    \sum_{x\in S_X} p_X(x)
+    &= \sum_{x=0}^{+\infty} e^{-\lambda}
+      \frac{\lambda^x}{x!} & \\
+    & = e^{-\lambda}\sum_{x=0}^{+\infty} \frac {\lambda^x}{x!} &
+                           \mbox{noto: }\sum_{x=0}^{+\infty}\frac{\lambda^x}{x!} = e^{\lambda} \\
+    &= e^{-\lambda}e^\lambda = e^{-\lambda + \lambda} = e^0 = 1. & \\
+  \end{align*}
+\end{itemize}
+
+Si usa tipicamente \(X\sim P(\lambda), \lambda > 0\) per modellare la
+distribuzione di una variabile casuale che esprime un
+\textbf{conteggio} con supporto illimitato superiormente (o molto più
+grande dei valori tipicamente assunti dal conteggio).  È questo il
+caso di \(Bi(n,p)\) per \(p = \sfrac{\lambda}{n}\) ed \(n\)
+sufficientemente grande.
+
+Altri risultati noti:
+\[
+  \E(x) = \sum_{x\in S_X} xp_X(x) = \sum_{x=0}^{+\infty} x
+  e^{-\lambda} \frac{\lambda^x}{x!} = \lambda\sum_{x=1}^{+\infty}
+  e^{-\lambda} \frac{\lambda^{x-1}}{(x-1)!} = \lambda
+  \sum_{x=0}^{+\infty} e^{-\lambda} \frac{\lambda^i}{i!} = \lambda
+\]
+
+\subsection{Leggi geometriche}
+
+\begin{definition}
+  Si dice che \(X\) ha legge geometrica con parametro \(p\in (0,1)\) e
+  si scrive \(X\sim Ge(p)\) se è una v.c.\ univariata con legge
+  discreta che ha supporto \(S_X = \N^+\) e f.m.p.\ per \(x\in S_X\)
+  pari a
+  \[
+    p_X(x) = p\times(1-p)^{x-1}.
+  \]
+\end{definition}
+
+Verifichiamo che sia una buona definizione:
+\begin{itemize}
+\item positività di \(p_X(x)\) sul supporto \(S_X = \N^+\) banale
+  perché è il prodotto di fattori positivi
+\item la normalizzazione segue da
+  \begin{align*}
+    \sum_{x\in S_X} p_X(x)
+    &= \sum_{x=1}^{+\infty} p (1-p)^{x-1} \\
+    &= p \sum_{x=1}^{+\infty} (1-p)^{x-1} \\
+    &= p \sum_{i=0}^{+\infty} (1-p)^i \\
+    &= p \frac{1}{1-(1-p)} = 1.
+  \end{align*}
+  dove si è usata il risultato della serie geometrica con ragione
+  \(x\), \(\abs{x} < 1\):
+  \begin{align*}
+    \sum_{i=0}^\infty x^i &= \lim_{n\to\infty}\sum_{i=0}^n x^i \\
+                          &= \lim_{n\to\infty}\frac{1-x^{n+1}}{1-x} \\
+                          &= \frac{1}{1-x} .
+  \end{align*}
+\end{itemize}
+
+Per una legge geometrica \(X\sim Ge(p)\) il parametro \(p\)
+rappresenta \(P(X = 1)\).
+
+La funzione di sopravvivenza è, per \(x\in\N^+\)
+\[
+  P(X>x) = P(C_1\cap \cdots \cap C_x) = P(C_1)\times\cdots\times
+  P(C_x) = (1-p)^x
+\]
+per cui la funzione di ripartizione è
+\[
+  F_X(x) = P(X\leq x) = 1 - P(X > x) = 1 - (1-p)^x .
+\]
+
+Per \(x\in\R\) invece si ha
+\[
+  F_X(x) = \begin{cases}
+    0 &\mbox{se } x < 1 \\
+    1-(1-p)^{\floor{x}} &\mbox{se } x \geq 1 .
+  \end{cases}
+\]
+
+Se \(0 < p < 1\) la v.c.\ \(X\sim Ge(p)\) può essere vista come il
+tempo d'attesa nel tempo discreto che gode della proprietà di assenza
+della memoria, ovvero per ogni \(s,t \in \N^+\)
+\[
+  P(X>s+t \mid X>s) \quad\mbox{non dipende da } s.
+\]
+
+Altri risultati noti:
+\[
+  \E(X) = \sfrac{1}{p}
+\]
+
+\section{Leggi di tipo continuo}
+
+Si dice che \(X\) è una \textbf{v.c.\ univariata con legge di tipo
+  continuo} se per ogni \(B\in\B_1\) si può esprimere \(P_X(B)\) in
+forma integrale come
+\[
+  P_X(B) = P(X\in B) = \int_B p_X(x)dx = \int_a^b p_X(x) dx
+\]
+se \(B = [a,b]\) con \(a < b\), dove la funzione \(p_X(x)\) detta
+funzione di densità di probabilità soddisfa le condizioni:
+\begin{enumerate}
+\item \(p_X(x) \geq 0\) per ogni \(x\in\R\)
+\item \(\int_\R p_X(x) = \int_{-\infty}^{+\infty} p_X(x) dx = 1\)
+\end{enumerate}
+
+Una \(P_x\) definita in questo modo soddisfa gli assiomi di
+Kolmogorov.
+
+
+\subsection{Leggi uniformi continue}
+Si dice che \(X\) ha legge uniforme continua in \((a,b)\), dove
+\(a<b\), e si scrive \(X\sim U(a,b)\) se la f.d.p.\ di \(X\) è
+\[
+  p_X(x) = \begin{cases}
+    1\over{b-a} & \mbox{se } x\in (a,b) \\
+    0 & \mbox{se } x\not\in (a,b) .
+  \end{cases}
+\]
+da cui valori atteso e varianza si ricavano facilmente come:
+\begingroup
+% inizia un nuovo group per ``localizzare'' il \addtolength in modo
+% che non ``sballi'' gli align* seguenti.  Aggiunge un po' di spazio
+% extra tra le righe per rendere le equazioni più leggibili IMO.
+\addtolength{\jot}{1em}
+\begin{align*}
+  \E(X) &= \int_{-\infty}^{+\infty} xp_X(x) dx = \int_a^b x
+          \frac{1}{b-a} dx = \frac{1}{b-a}\left[ \frac{1}{2}x^2 \right]_a^b =
+          \frac{a+b}{2} \\
+  \E(X^2) &= \int_a^b x^2 \frac{1}{b-a}dx = \frac{1}{b-a}\left[
+            \frac{1}{3}x^3 \right]_a^b = \frac{a^2 + ab + b^2}{3} \\
+  \Var(X) &= \E(X^2) - {(\E(X))}^2 = \cdots = \frac{{(b-a)}^2}{12}.
+\end{align*}
+\endgroup
+
+\subsection{Leggi esponenziali}
+Si dice che \(X\) ha legge esponenziale con parametro \(\lambda > 0\),
+e si scrive \(X\sim Esp(\lambda)\), se la f.d.p.\ di \(X\) è
+\[
+  p_X(x) = \begin{cases}
+    \lambda e^{-\lambda x} & \mbox{se } x \geq 0 \\
+    0 & \mbox{se } x < 0
+  \end{cases}
+\]
+
+La verifica della non-negatività è banale, e anche la condizione di
+normalizzazione si verifica facilmente:
+\begin{align*}
+  \int_{-\infty}^{+\infty} p_X(x) dx &= \int_0^{+\infty} p_X(x) dx =
+                                       \int_0^{+\infty} \lambda  e^{-\lambda x} dx =
+                                       {\left[ -e^{-\lambda x} \right]}_0^{+\infty} \\
+                                     & =- \lim_{x\to +\infty} e^{-\lambda x} - (-e^0) = 1.
+\end{align*}
+
+Calcolo del valore atteso:
+\[
+  \E(X) = \int_{-\infty}^{+\infty} x p_X(x) dx = \int_0^{+\infty} x
+  \lambda e^{-\lambda x} dx = \frac{1}{\lambda} \int_0^{+\infty}
+  \lambda x e^{-\lambda x} dx = 1
+\]
+dove l'ultimo integrale vale 1 (si calcola per parti dopo aver
+applicato la sostituzione \(\lambda x = t\)).
+
+Le leggi esponenziali sono la modellazione di \textit{default} per
+tempi d'attesa.  Il risultato sul valore atteso dà un significato al
+parametro \(\lambda\). Per un tempo d'attesa esponenziale,
+\(\sfrac{1}{\lambda}\) è il valore medio dell'attesa. Quindi:
+\[
+  \lambda = \frac{1}{\mbox{media dell'attesa}} = \frac{1}{\E(X)}
+\]
+
+Altri risultati noti:
+\[
+  F_X(x) = \begin{cases}
+    0 &\mbox{se } x < 0 \\
+    1-e^{-\lambda x} &\mbox{se } x\geq 0
+  \end{cases}
+\]
+
+\subsection{Funzione tasso di guasto}
+Sia \(T\) un tempo d'attesa, quindi una v.c.\ univariata con \(P(T\geq
+0) = 1\) e legge continua.  Si indichino con
+\begin{description}
+\item[funzione di ripartizione] \(F_T(t) = P(T \leq t)\)
+\item[funzione di sopravvivenza] \(\FS_T(t) = 1-F_T(t) = P(T > t)\)
+\item[f.d.p.] \(p_T(t) = \frac d{dt} F_T(t)\) supposta continua
+  ovunque, salvo che in un numero finito di punti.
+\end{description}
+
+\begin{definition}
+  Si dice funzione tasso di guasto di \(T\) (o \textit{hazard rate},
+  \textit{failure rate}) la funzione \(r_T(\cdot)\) definita per i
+  valori di \(t\) per cui \(F_T(t) < 1\) da
+  \[
+    r_T(t) = \frac{p_T(t)}{\FS_T(t)} = - \frac d{dt} \log\FS_T(t) .
+  \]
+\end{definition}
+
+Nei punti in cui \(r_T(t)\) è continua, è anche proporzionale alla
+probabilità che l'attesa, ancora viva al tempo \(t\), termini entro il
+tempo \(t+\epsilon\), ossia nel tempuscolo immediatamente successivo a
+\(t\).
+
+Dalla funzione tasso di guasto si può determinare la funzione di
+ripartizione e la funzione di densità di probabilità di \(T\),
+infatti:
+\[
+  \int_0^t r_T(u) \du = -\log \FS_T(t)
+\]
+da cui si ottiene che per \(t > 0\)
+\[
+  F_T(t) = 1 - \exp \left\{ - \int_0^t r_T(u) \du \right\}
+\]
+e
+\[
+  p_T(t) = r_T(t) \times \exp \left\{ -\int_0^t r_T(u) \du \right\} .
+\]
+
+\subsection{Leggi di Weibull}
+
+Un tempo d'attesa \(T_0\) ha legge di Weibull monoparametrica con
+parametro di forma \(c>0\) se per \(t>0\) il suo tasso di guasto è
+\[
+  r_{T_0}(t) = c \times t^{c-1}
+\]
+
+Interessante è notare come \(Esp(1)\) faccia parte delle leggi di
+Weibull, ma \(Esp(\lambda), \lambda \neq 1\) no.  Per questo motivo,
+si introduce un secondo parametro alle leggi di Weibull:
+\[
+  r_T(t) = \lambda c (\lambda t)^{c-1} .
+\]
+
+Le esponenziali diventano un caso particolare \(Esp(\lambda) \sim W(1,
+\lambda)\).
+
+Si noti come \(r_{T_0}(t)\) sia decrescente per \(0 < c < 1\),
+costante per \(c = 1\) e crescente se \(c > 1\).
+
+Si può calcolare la funzione di ripartizione tenendo a mente che
+\(\int_0^t r_T(u) \du = (\lambda t)^c\):
+\[
+  F_T(t) = 1 - \exp \{ -(\lambda t)^c \}
+\]
+e la corrispondente f.d.p.
+\[
+  p_T(t) = \lambda c (\lambda t)^{c-1} \exp\{ -(\lambda t)^c \} .
+\]
+
+\subsection{Leggi gamma}
+
+Si tratta di un secondo modo per modellare tempi d'attesa nel continuo
+con tasso di guasto monotono.
+
+\begin{definition}
+  Un tempo d'attesa \(T_0\) ha legge gamma monoparametrica con
+  parametro di forma \(\alpha > 0\) se per \(t>0\) la sua funzione di
+  densità di probabilità è
+  \[
+    p_{T_0}(t) = \frac 1{\Gamma(\alpha)} t^{\alpha-1}e^{-t} .
+  \]
+\end{definition}
+
+La funzione \(\Gamma(\alpha)\) è la funzione gamma di Eulero ed è
+definita dall'integrale convergente per \(\alpha > 0\)
+\[
+  \Gamma(\alpha) = \int_0^{+\infty} t^{\alpha -1}e^{-t} \dt.
+\]
+che è l'estensione della nozione di fattoriale per i numeri reali
+positivi.
+
+Anche in questo caso introdurre un parametro \textit{scala} \(\lambda
+> 0\):
+\[
+  p_T(t) = \frac{\lambda^\alpha}{\Gamma(\alpha)} t^{\alpha -1}
+  e^{-\lambda t} .
+\]
+in modo che le leggi esponenziali diventi un caso particolare di leggi
+gamma \(Esp(\lambda) \sim Ga(1, \lambda)\).
+
+Si dimostra (non qui) che \(r_{T_0}(t)\) è decrescente se \(0 < \alpha
+< 1\), costante se \(\alpha = 1\) e crescente se \(\alpha > 1\)
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

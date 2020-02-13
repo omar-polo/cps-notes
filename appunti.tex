@@ -47,6 +47,12 @@
 \newcommand\du{\,du}
 \newcommand\dt{\,dt}
 
+% la barra verticale per il ``calcolato su''
+\newcommand\computedat{\:\bigg\rvert}
+
+% una sommatoria ``piccina''
+\newcommand\smallsum{\textstyle\sum}
+
 % Cebyshev è un nome che non posso scrivere con la mia tastiera
 \newcommand\Cebyshev{\v Cebyshev}
 
@@ -568,10 +574,10 @@ detta funzione di sopravvivenza di \(X\)
 \paragraph{Dalla \(p_X(x)\) alla \(F_X(x)\)} Sia \(X\) una v.c.\
 univariata.  Dalla definizione si ha subito che
 \[
-  F_X(x) = P(X\leq x) = \begin{cases}
+  F_X(x) = P(X\leq x) = \begin{dcases}
     \sum_{t\in S_X \mid t\leq x} p_X(t) & \mbox{se \(X\) ha legge discreta} \\
     \int_{-\infty}^x p_X(t) dt & \mbox{se \(X\) ha legge continua}
-  \end{cases}
+  \end{dcases}
 \]
 
 Si possono quindi fare le seguenti osservazioni:
@@ -605,6 +611,68 @@ derivabile e vale
 \[
   p_X(x) = \frac{d}{dx}F_X(x).
 \]
+
+\section{Funzione generatrice dei momenti}
+\begin{definition}[Momenti]
+  Si dicono momenti di una v.c.\ univariata \(X\) i valori
+  \[
+    \mu_r = \E(X^r), r = 1, 2, \dots
+  \]
+
+  In particolare, \(\mu_r\) è detto \textbf{momento \(r\)-esimo} di \(X\).
+\end{definition}
+
+Si ha subito che:
+\begin{align*}
+  \mu_1 &= \mu = \E(X) \\
+  \mu_2 - \mu_1^2 &= \E(X^2)- \left( \E(X) \right)^2 = \Var(X)
+\end{align*}
+
+\begin{definition}[Funzione generatrice dei momenti]
+  Sia \(X\) una v.c.\ univariata con f.m.p.\ o f.d.p.\ \(p_X(x)\).  La
+  funzione generatrice dei momenti di \(X\), indicata con \(M_X(t)\),
+  è una funzione di variabile reale definita da
+  \[
+    M_X(t) = \E(e^{tX}) = \begin{dcases}
+      \sum_{x\in S_X} e^{tx} p_X(x) &\mbox{se \(X\) ha legge discreta} \\
+      \int_{-\infty}^{+\infty} e^{tx} p_X(x) \dx &\mbox{se \(X\) ha
+        legge continua}
+    \end{dcases}
+  \]
+\end{definition}
+
+Tale funzione gode delle seguenti proprietà:
+\begin{itemize}
+\item nell'origine vale sempre \(M_X(0) = 1\) per ogni \(X\);
+\item il dominio di finitezza di \(M_X(t)\), ovvero \(D_X = \{ t\in\R
+  \mid M_X(t) < +\infty \}\), è \textbf{convesso} (ovvero è un
+  intervallo, una semiretta o l'intera retta reale);
+\item \(M_X(t) > 0 \quad\forall t\in D_X\)
+\end{itemize}
+
+\begin{definition}[Funzione generatrice dei momenti propria]
+  Si dice che la v.c.\ univariata \(X\) ha funzione generatrice dei
+  momenti propria se il dominio di finitezza di \(M_X(t)\) include
+  l'origine come punto interno.
+\end{definition}
+
+Una proprietà interessa delle funzioni generatrici dei momenti proprie
+è che nell'origine hanno derivate di ogni ordine, i cui valori
+``generano'' i momenti di \(X\)
+\[
+  \mu_r = \E(X^r) = \frac{d^r}{dt^r} M_X(t) \computedat_{t = 0} = M_X^{(r)}(0).
+\]
+che rende in alcuni casi più semplice calcolare valore atteso e varianza.
+
+\begin{definition}(Generatrice della somma di v.c. indipendenti) Sia
+  \(X = (X_1, \dots, X_d)\) una v.c.\ multivariata con componenti
+  \(X_i\) indipendenti che hanno funzione generatrice dei momenti
+  propria \(M_{X_i}(t)\).  Allora \(S = \sum_{i=1}^d X_i\) ha funzione
+  generatrice dei momenti propria
+  \[
+    M_S(t) = \prod_{i=1}^d M_{X_i}(t).
+  \]
+\end{definition}
 
 \section{Leggi di tipo discreto}
 Le leggi discrete sono in generale individuate da due ingredienti:
@@ -643,13 +711,22 @@ per \(B\in\B_d\) la legge di probabilità di \(X\) è
   \end{cases}
 \]
 
-Alcuni risultati noti:
+\paragraph{Funzione di ripartizione}
 \[
   F_X(x) = \begin{cases}
     0 & \mbox{se } x < x_0 \\
     1 & \mbox{se } x \geq x_0
   \end{cases}
 \]
+
+\paragraph{Generatrice dei momenti, valore atteso e varianza}
+\begin{align*}
+  M_X(t) &= \E(e^{tX}) = \sum_{x\in S_X} e^{tx} p_X(x) = e^{t x_0} (1)
+           = e^{t x_0} \\
+  M_X'(t) &= x_0 e^{tx_0} \Rightarrow \E(X) = M_X'(0) = x_0 \\
+  M_X''(t) &= x_0^2e^{t x_0} \Rightarrow \E(X^2) = M_X''(0) = x_0^2
+\end{align*}
+da cui \(\Var(X) = \E(X^2) - (\E(X))^2 = x_0^2 - (x_0)^2 = 0\).
 
 \subsection{Leggi binomiali}
 Si dice che la v.c.\ univariata \(X\) ha legge binomiale con indice
@@ -669,6 +746,24 @@ Alcuni risultati noti:
     1-p & \mbox{se } 0\geq x < 1 \\
     1   & \mbox{se } x\geq 1
   \end{cases}\qquad\mbox{supponendo } X\sim Bi(1, p)
+\]
+
+\paragraph{Proprietà additiva}
+Sia \(X = (X_1, \dots, X_d)\) una v.c.\ multivariata con componenti
+\(X_i\) indipendenti e legge marginale \(X_i\sim Bi(n_i, p)\), dove
+\(n_i \in \N^+\) e \(p \in (0,1)\) per cui
+\[
+  M_{X_i}(t) = \left( 1 - p + pe^t\right)^{n_i}
+\]
+allora \(S = \sum_{i=1}^d X_i\) ha f.g.m.\ propria
+\begin{align*}
+  M_S(t) &= \prod_{i=1}^d M_{X_i}(t) \\
+         &= \prod_{i=1}^d \left( 1-p+pe^t \right)^{n_i} \\
+         &= \left( 1 - p + pe^t \right)^{\sum_{i=1}^d n_i}
+\end{align*}
+per cui
+\[
+  S \sim Bi\left( \smallsum_{i=1}^d n_i, \: p \right).
 \]
 
 \subsection{Leggi uniformi discrete}
@@ -731,12 +826,53 @@ grande dei valori tipicamente assunti dal conteggio).  È questo il
 caso di \(Bi(n,p)\) per \(p = \sfrac{\lambda}{n}\) ed \(n\)
 sufficientemente grande.
 
-Altri risultati noti:
+\paragraph{Valore atteso}
 \[
   \E(x) = \sum_{x\in S_X} xp_X(x) = \sum_{x=0}^{+\infty} x
   e^{-\lambda} \frac{\lambda^x}{x!} = \lambda\sum_{x=1}^{+\infty}
   e^{-\lambda} \frac{\lambda^{x-1}}{(x-1)!} = \lambda
   \sum_{x=0}^{+\infty} e^{-\lambda} \frac{\lambda^i}{i!} = \lambda
+\]
+
+\paragraph{Funzione generatrice dei momenti e varianza}
+\begin{align*}
+  M_X(t)
+  &= \E(x^{t X}) = \sum_{x\in S_X} e^{tx} p_X(x) \\
+  &= \sum_{x=0}^{+\infty} \left( e^t \right)^x e^{-\lambda}\frac{\lambda^x}{x!} \\
+  &= e^{-\lambda} \sum_{x=0}^{+\infty} \frac{\left( \lambda e^t\right)^x}{x!} \\
+  &= e^{-\lambda} e^{\lambda e^t} \\
+  &= e^{\lambda (e^t -1)}
+\end{align*}
+da cui
+\begin{align*}
+  M_X'(t) &= e^{\lambda (e^t -1) \lambda e^t} \Longrightarrow \E(X) =
+            M_X'(0) = \lambda \\
+  M_X''(t) &= e^{\lambda (e^t -1)} \lambda^2 e^{2t} + e^{\lambda (e^t
+             -1)}\lambda e^t \Longrightarrow \E(X^2) = M_X''(0) =
+             \lambda^2 + \lambda
+\end{align*}
+e pertanto
+\[
+  \Var(X) = \E(X^2) - (\E(X))^2 = \lambda^2 + \lambda - (\lambda)^2 = \lambda.
+\]
+
+\paragraph{Proprietà additiva}
+Sia \(X = (X_1, \dots, X_d)\) una v.c.\ multivariata con componenti
+\(X_i\) indipendenti e legge marginale \(X_i \sim P(\lambda_i)\) dove
+\(lambda_i > 0\) per \(i = 1, \dots, n\)
+\[
+  M_{X_i}(t) = e^{\lambda_i (e^t -1)}
+\]
+allora \(S = \sum_{i=1}^d X_i\) ha f.g.m.\ propria
+\begin{align*}
+  M_S(t)
+  &= \prod_{i=1}^d M_{X_i}(t) \\
+  &= \prod_{i=1}^d e^{\lambda_i (e^t -1)} \\
+  &= \exp \left\{ \left( \sum_{i=1}^d \lambda_i \right) (e^t-1) \right\}
+\end{align*}
+da cui si evince che
+\[
+  S \sim P\left( \smallsum_{i=1}^d \lambda_i \right) .
 \]
 
 \subsection{Leggi geometriche}
@@ -800,9 +936,32 @@ della memoria, ovvero per ogni \(s,t \in \N^+\)
   P(X>s+t \mid X>s) \quad\mbox{non dipende da } s.
 \]
 
-Altri risultati noti:
+\paragraph{Valore atteso}
 \[
-  \E(X) = \sfrac{1}{p}
+  \E(X) = \sfrac{1}{p}.
+\]
+
+\paragraph{Generatrice dei momenti e varianza}
+\begin{align*}
+  M_X(t) = \E(e^{tX})
+  &= \sum_{x\in S_X} e^{tx} p_X(x)  &\\
+  &= \sum_{x=1}^{+\infty} e^{t(x-1+1)}p(1-p)^{x-1} &\\
+  &= pe^t \sum_{x=1}^{+\infty} e^{t(x-1)}(1-p)^{x-1} &\\
+  &= pe^t \sum_{i=0}^{+\infty} (e^t(1-p))^i &\mbox{posto } i = x-1 \\
+  &= \frac{ pe^t }{ 1-(1-p)e^t }
+\end{align*}
+
+Saltando un po' di passaggi si trova che
+\[
+  M'_X(t) \computedat_0
+  = \frac{pe^t}{\left( 1-(1-p)e^t \right)^2} \computedat_0
+  = \frac{1}{p}.
+\]
+
+Con calcoli lasciati al lettore\footnote{dal professore, non da
+  me. Prendetevela con lui.}
+\[
+  \Var(X) = \frac{1-p}{p^2}.
 \]
 
 \section{Leggi di tipo continuo}
@@ -885,13 +1044,37 @@ parametro \(\lambda\). Per un tempo d'attesa esponenziale,
   \lambda = \frac{1}{\mbox{media dell'attesa}} = \frac{1}{\E(X)}
 \]
 
-Altri risultati noti:
+\paragraph{Funzione di ripartizione}
 \[
   F_X(x) = \begin{cases}
     0 &\mbox{se } x < 0 \\
     1-e^{-\lambda x} &\mbox{se } x\geq 0
   \end{cases}
 \]
+
+\paragraph{Funzione generatrice dei momenti, valore atteso e varianza}
+\begin{align*}
+  M_X(t) = \E(e^{tX})
+  &= \int_0^{+\infty} e^{tx} \lambda e^{-\lambda x} \dx \\
+  &= \lambda \int_0^{+\infty} e^{-(\lambda - t)x} \dx \\
+  &= \frac{\lambda}{\lambda - t} \int_0^{+\infty} (\lambda -t)e^{-(\lambda -t)}x \dx \\
+  &= \frac{\lambda}{\lambda -t}
+\end{align*}
+da cui
+\begin{align*}
+  M'_X(t)
+  &= - \left( 1 - \frac{t}{\lambda} \right)^{-2}
+    \left(-\frac{1}{\lambda}\right) =
+    \frac{1}{\lambda} \left( 1 - \frac{t}{\lambda} \right)^{-2} \\
+  M''_X(t)
+  &= \frac{-2}{\lambda} \left( 1-\frac{t}{\lambda}
+    \right)^{-3} \left( -\frac{1}{\lambda} \right) =
+    \frac{2}{\lambda^2} \left( 1 - \frac{t}{\lambda} \right)^{-3}
+\end{align*}
+da cui infine si ottiene
+\begin{align*}
+  \Var(X) = \E(X^2) - (\E(X))^2 = \frac 1 \lambda^2 .
+\end{align*}
 
 \subsection{Funzione tasso di guasto}
 Sia \(T\) un tempo d'attesa, quindi una v.c.\ univariata con \(P(T\geq
@@ -996,6 +1179,47 @@ gamma \(Esp(\lambda) \sim Ga(1, \lambda)\).
 
 Si dimostra (non qui) che \(r_{T_0}(t)\) è decrescente se \(0 < \alpha
 < 1\), costante se \(\alpha = 1\) e crescente se \(\alpha > 1\)
+
+\paragraph{Funzione generatrice dei momenti, valore atteso e varianza}
+Alcuni passaggi sono stati omessi per brevità
+\begin{align*}
+  M_X(t) = \E(e^{tX})
+  &= \int_0^{+\infty} e^{tx} \frac{\lambda^\alpha}{\Gamma(\alpha)} x^{\alpha -1} e^{-\lambda x} \dx \\
+  &= \lambda^\alpha \times
+    \int_0^{+\infty} \frac{x^{\alpha-1}}{\Gamma(\alpha)} e^{-(\lambda -t) x} \dx \\
+  &= \frac{\lambda^\alpha}{(\lambda -t)^\alpha} \times
+    \int_0^{+\infty} \frac{(\lambda -t)^\alpha}{\Gamma(\alpha)} e^{-(\lambda-t)x} \dx \\
+  &= \frac{\lambda^\alpha}{(\lambda -t)^\alpha}
+\end{align*}
+
+Si ottiene
+\begin{align*}
+  \E(X) &= M'_X(0) = \frac{\alpha}{\lambda} \\
+  \E(X^2) &= M''_X(0) = \frac{\alpha (\alpha +1)}{\lambda^2}
+\end{align*}
+da cui
+\[
+  \Var(X) = E(X^2) - (E(X))^2 = \frac{\alpha}{\lambda^2}.
+\]
+
+\paragraph{Proprietà additiva}
+Sia \(X = (X_1, \dots, X_d)\) una v.c.\ multivariata con componenti
+\(X_i\) indipendenti e legge marginale \(X_i \sim Ga(\alpha_i,
+\lambda)\) dove \(\alpha_i > 0\) per ogni \(i = 1, \dots, n\) e
+\(\lambda > 0\) per cui
+\[
+  M_{X_i}(t) = \left( 1 - \frac{t}{\lambda} \right)^{-\alpha_i}
+\]
+allora \(S = \sum_{i=1}^d X_i\) ha f.g.m.\ propria
+\begin{align*}
+  M_S(t) &= \prod_{i=1}^d M_{X_i}(t) \\
+         &= \prod_{i=1}^d \left( 1 \ frac{t}{\lambda} \right)^{-\alpha_i} \\
+         &= \left( 1 - \frac{t}{\lambda} \right)^{- \sum_{i=1}^d \alpha_i}
+\end{align*}
+da cui si evince che
+\[
+  S \sim Ga\left( \smallsum_{i=1}^d \alpha_i, \: \lambda \right) .
+\]
 
 \end{document}
 

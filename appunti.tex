@@ -46,15 +46,22 @@
 \newcommand\dy{\,dy}
 \newcommand\du{\,du}
 \newcommand\dt{\,dt}
+\newcommand\dz{\,dz}
 
 % la barra verticale per il ``calcolato su''
-\newcommand\computedat{\:\bigg\rvert}
+\newcommand{\computedat}[1]{\:\bigg\rvert_{#1}}
 
 % una sommatoria ``piccina''
 \newcommand\smallsum{\textstyle\sum}
 
+% per rendere più leggibili alcuni passaggi
+\newcommand\fulfillment{\longrightarrow}
+
 % Cebyshev è un nome che non posso scrivere con la mia tastiera
 \newcommand\Cebyshev{\v Cebyshev}
+
+% cercando di rendere alcune sezioni più semantiche
+\newcommand{\explain}[2]{\underbrace{#1}_{\parbox{\widthof{\ensuremath{#1}}}{\footnotesize\raggedright #2}}}
 
 \DeclareMathOperator{\Var}{Var}
 \DeclareMathOperator{\Cov}{Cov}
@@ -435,12 +442,12 @@ dal proprio valore atteso.
 
 \paragraph{Invarianza rispetto a traslazioni}
 \[
-  \Var(X+b) = \Var(X) .
+  \Var(X+b) = \Var(X)
 \]
 
 \paragraph{Omogeneità di secondo grado}
 \[
-  \Var(aX) = a^2 \Var(X).
+  \Var(aX) = a^2 \Var(X)
 \]
 
 \subsection{Scarto quadratico medio}
@@ -456,8 +463,8 @@ radice quadrata aritmetica della varianza.  In simboli
 Il \textit{range} di una v.c.\ univariata \(X\), indicato con \(R_X\)
 è definito per variabili con supporto limitato come
 \[
-  R_X = \max(S_X) - \min(S_X)
-\].
+  R_X = \max(S_X) - \min(S_X).
+\]
 
 \subsection{Scarto interquantilico}
 Lo scarto interquantilico di una v.c.\ univariata \(X\), indicato con
@@ -660,7 +667,7 @@ Una proprietà interessa delle funzioni generatrici dei momenti proprie
 è che nell'origine hanno derivate di ogni ordine, i cui valori
 ``generano'' i momenti di \(X\)
 \[
-  \mu_r = \E(X^r) = \frac{d^r}{dt^r} M_X(t) \computedat_{t = 0} = M_X^{(r)}(0).
+  \mu_r = \E(X^r) = \frac{d^r}{dt^r} M_X(t) \computedat{t = 0} = M_X^{(r)}(0).
 \]
 che rende in alcuni casi più semplice calcolare valore atteso e varianza.
 
@@ -743,7 +750,7 @@ Alcuni risultati noti:
 \[
   F_X(x) = \begin{cases}
     0   & \mbox{se } x < 0 \\
-    1-p & \mbox{se } 0\geq x < 1 \\
+    1-p & \mbox{se } 0\leq x < 1 \\
     1   & \mbox{se } x\geq 1
   \end{cases}\qquad\mbox{supponendo } X\sim Bi(1, p)
 \]
@@ -951,10 +958,10 @@ della memoria, ovvero per ogni \(s,t \in \N^+\)
   &= \frac{ pe^t }{ 1-(1-p)e^t }
 \end{align*}
 
-Saltando un po' di passaggi si trova che
+Saltando alcuni passaggi si trova che
 \[
-  M'_X(t) \computedat_0
-  = \frac{pe^t}{\left( 1-(1-p)e^t \right)^2} \computedat_0
+  M'_X(t) \computedat{t=0}
+  = \frac{pe^t}{\left( 1-(1-p)e^t \right)^2} \computedat{t=0}
   = \frac{1}{p}.
 \]
 
@@ -1078,7 +1085,7 @@ da cui infine si ottiene
 
 \subsection{Funzione tasso di guasto}
 Sia \(T\) un tempo d'attesa, quindi una v.c.\ univariata con \(P(T\geq
-0) = 1\) e legge continua.  Si indichino con
+0) = 1\) e legge continua. Siano date
 \begin{description}
 \item[funzione di ripartizione] \(F_T(t) = P(T \leq t)\)
 \item[funzione di sopravvivenza] \(\FS_T(t) = 1-F_T(t) = P(T > t)\)
@@ -1220,6 +1227,119 @@ da cui si evince che
 \[
   S \sim Ga\left( \smallsum_{i=1}^d \alpha_i, \: \lambda \right) .
 \]
+
+\subsection{Leggi normali}
+
+\begin{definition}[Legge normale standard]
+  Una v.c.\ univariata \(Z\) con supporto \(S_Z = \R\) e f.d.p
+  \[
+    p_Z(z) = \frac{1}{\sqrt{2 \pi}} e^{- \frac{1}{2} z^2}
+  \]
+  è detta con legge normale standard, in breve \(Z \sim N(0,
+  1)\).
+\end{definition}
+
+\begin{definition}[Legge normale con parametri]
+  Una v.c.\ univariata \(X = \mu + \sigma Z\) con \(Z \sim N(0, 1)\) è
+  detta normale con parametro di posizione \(\mu\) e parametro di
+  scala \(\sigma\), in breve \(X \sim N(\mu, \sigma^2)\) e a f.d.p.
+  \[
+    % highlight that \sigma is not under the square root.
+    p_X(x) = \frac{1}{\sqrt{2 \pi}\: \sigma} \exp \left\{ -\frac{1}{2} \left( \frac{x - \mu}{\sigma} \right)^2 \right\}
+  \]
+\end{definition}
+
+Un'applicazione delle leggi normali è lo studio degli errori di
+misurazione.  Si supponga di effettuare misurazioni ripetute con lo
+stesso strumento di una certa quantità \(\mu\).  Le misure \(x_i\),
+affette da errore, possono essere modellate come realizzazione della
+variabile casuale \(X \fulfillment x_i\).  Gli stessi errori di
+misurazione (ignoti) possono essere modellati come variabile casuale
+\(Z \fulfillment z_i\).  In questo ultimo caso però conviene usare una
+scala \textit{standard}\footnote{che quindi va \textit{scalata} di
+  caso in caso con l'ausilio di un fattore \(\sigma\)}, e perciò
+\[
+  x_i = \mu + \sigma z_i \qquad i = 1, \dots, n \qquad \sigma \in \R
+\]
+da cui per confronto si può dedurre che \(X\) non è altro che una
+trasformata
+\[
+  X = \mu + \sigma Z.
+\]
+
+\paragraph{Chiusura sotto trasformazioni affini}
+Se \(X \sim N(\mu, \sigma^2)\) e \(T = a + bX\), con \(b \neq 0\)
+allora
+\[
+  T \sim N\left( a+b\mu, b^2\sigma^2 \right) .
+\]
+
+La dimostrazione segue dall'applicazione della definizione di \(X\),
+dal notare che \(Z\) è simmetrica \(Z \sim -Z\) e dal confronto:
+\begin{align*}
+  T &= a + bX &&\mbox{definizione di } T \\
+    &\sim a + b(\mu + \sigma Z) &&\mbox{definizione di } X \\
+    &\sim a + b\mu + b\sigma Z &&\\
+    &\sim a + b\mu + \abs{b} \sigma Z &&\mbox{per simmetria} \\
+    &\sim N(a+b\mu, b^2\sigma^2) &&\mbox{per confronto.}
+\end{align*}
+
+\paragraph{Funzione generatrice dei momenti}
+\begin{align*}
+  M_X(t)
+  &= \E(e^{tX}) &&\mbox{def. di f.g.m.} \\
+  &= \E\left( e^{t(\mu + \sigma Z)} \right) &&\mbox{def. di } X\\
+  &= \E( e^{t\mu} e^{t\sigma Z} ) \\
+  &= e^{t\mu} \E(e^{t \sigma Z}) &&\mbox{linearità di } \E \\
+  &= e^{t\mu} M_Z(t\sigma) &&\mbox{def. di f.g.m.}
+\end{align*}
+esplicitiamo \(M_Z\)
+\begin{align*}
+  M_Z(t) = E(e^{tZ})
+  &= \int_{-\infty}^{+\infty} e^{tz} \frac{1}{\sqrt{2 \pi}} e^{\frac{1}{2}z^2} \dz \\
+  &= \int_{-\infty}^{+\infty} \frac{1}{\sqrt{2 \pi}}
+    e^{-\frac{1}{2}(z^2 -2tz + t^2 - t^2)} \dz \\
+  &= e^{\frac{1}{2}t^2}
+    \explain{ \int_{-\infty}^{+\infty} \frac{1}{\sqrt{2\pi}} e^{\frac{1}{2}(z-t)^2} \dz}
+    {si tratta della f.d.p. di \(N(t, 1)\) e quindi per la normalizzazione vale 1} \\
+  &= e^{\frac{1}{2}t^2}
+\end{align*}
+e quindi
+\[
+  M_X(t) = e^{t\mu} e^{\frac{1}{2}(t\sigma)^2} = e^{t\mu + \frac{1}{2}t^2\sigma^2}
+\]
+
+Essendo \(M_Z(t)\) finita per ogni \(t\in\R\), \(Z\) ha f.g.m.\ propria.
+
+Ora è possibile calcolare valore atteso e varianza:
+\begin{align*}
+  E(X) &= M'_X(t)\computedat{t=0} = \mu \\
+  \E(X^2) &= M''_X(t)\computedat{t=0} = \sigma^2 + \mu^2 \\
+  \Var(X) &= \E(X^2) - \left( \E(X) \right)^2 = \sigma^2 + \mu^2 - (\mu)^2 = \sigma^2.
+\end{align*}
+
+\paragraph{Proprietà additiva}
+Se \(X \sim N(\mu_X, \sigma^2_X)\) e \(Y \sim N(\mu_Y, \sigma^2_Y)\)
+sono indipendenti allora
+\[
+  S = X + 5 = \N(\mu_X + \mu_Y, \sigma^2_X + \sigma^2_Y) .
+\]
+
+\paragraph{Funzione di ripartizione}
+La funzione di ripartizione di \(Z \sim N(0, 1)\) verrà indicata con
+\(\Phi(z)\) definita come:
+\[
+  \Phi(z) = P(Z \leq z) = \int_{-\infty}^z \frac{1}{\sqrt{2\pi}} e^{\frac{1}{2}u^2} \du.
+\]
+
+È possibile ricondurre la f.r.\ di una v.c.\ normale
+\(X \sim N(\mu, \sigma^2)\) a quella della normale standard \(Z\):
+\begin{align*}
+  F_X(x) &= P(X \leq x) &&\mbox{def. di f.r.} \\
+         &= P(\mu + \sigma Z \leq x) &&\mbox{def. di } X \\
+         &= P\left( Z \leq \frac{x-\mu}{\sigma} \right) &&\\
+         &= \Phi\left( \frac{x-\mu}{\sigma} \right) .
+\end{align*}
 
 \end{document}
 

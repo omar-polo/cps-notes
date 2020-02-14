@@ -39,6 +39,7 @@
 \newcommand\B{\mathcal{B}}
 \newcommand\F{\mathcal{F}}
 \newcommand\D{\mathcal{D}}
+\newcommand\y{\mathcal{Y}}
 
 % per gli integrali, aggiunge un po' di spazio prima del `dx' o del
 % `dy'.
@@ -1322,7 +1323,7 @@ Ora è possibile calcolare valore atteso e varianza:
 Se \(X \sim N(\mu_X, \sigma^2_X)\) e \(Y \sim N(\mu_Y, \sigma^2_Y)\)
 sono indipendenti allora
 \[
-  S = X + 5 = \N(\mu_X + \mu_Y, \sigma^2_X + \sigma^2_Y) .
+  S = X + 5 = N(\mu_X + \mu_Y, \sigma^2_X + \sigma^2_Y) .
 \]
 
 \paragraph{Funzione di ripartizione}
@@ -1340,6 +1341,86 @@ La funzione di ripartizione di \(Z \sim N(0, 1)\) verrà indicata con
          &= P\left( Z \leq \frac{x-\mu}{\sigma} \right) &&\\
          &= \Phi\left( \frac{x-\mu}{\sigma} \right) .
 \end{align*}
+
+\section{Campionamento casuale semplice}
+
+Un esperimento di campionamento casuale semplice è l'osservazione
+ripetuta in circostanze indipendenti di un dato fenomeno che
+manifesta, di ripetizione in ripetizione, una apprezzabile
+variabilità.  Il numero di replicazioni \(n\) dell'osservazione si
+dice \textbf{numerosità}.
+
+Effettuato un esperimento di c.c.s.\ si ottiene \(y = (y_1, \dots,
+y_n)\), che può essere vista come realizzazione di una v.c.\
+\(n\)-variata \(Y = (Y_1, \dots, Y_n)\) con componenti \(Y_i\)
+indipendenti e identicamente distribuite.
+
+Il supporto di \(Y\) è detto spazio campionario, indicato con \(\y\)
+ed è definito come
+\[
+  \y = S_{Y_1} \times\cdots\times S_{Y_n} = S_{Y_1}^n .
+\]
+
+Possiamo vedere \(p_{Y_1}(y_1)\) come una funzione dipendente da un
+parametro \(\theta\) ignoto. \(Y\) ha quindi legge
+\[
+  p_Y(y; \theta)
+  = p_{Y_1, \dots, Y_n}(y_1, \dots, y_n; \theta)
+  = \prod_{i=1}^n p_{Y_1}(y_i; \theta)
+\]
+dove \(y\in\y = S_{Y_1}^n\).
+
+\paragraph{Statistiche riassuntive} Dato che nel mondo reale il valore
+del parametro \(\theta\) è solitamente ignoto, il campionamento
+casuale semplice viene usato come mezzo per determinarlo.  Il campione
+osservato permetterà di illuminare aspetti altrimenti ignoti della
+legge di popolazione.
+
+Una volta ottenuto il campione \(y\), allo scopo di determinare
+\(\theta\), si calcola una opportuna statistica riassuntiva
+\(t = t(y)\), tipicamente della stessa dimensione di \(\theta\).  Tale
+statistica riassuntiva può dipendere dalla forma di
+\(p_Y(y; \theta)\).
+
+\begin{definition}
+  La distribuzione campionaria di una statistica \(t = t(y)\) è la
+  legge di probabilità della v.c.\ trasformata \(T = t(Y)\) quando la
+  legge di \(Y\) è descritta da \(P_Y(y; \theta)\).
+\end{definition}
+
+Quest'ultima definizione sottolinea come anche la nostra \(t = t(y)\),
+dato che dipende dal campione \(y\), è realizzata dal caso, e quindi
+non sarà in grado di indicare con certezza il valore di \(\theta\).
+
+\paragraph{C.c.s.\ da popolazione normale con \(\sigma\) noto}
+\begin{align*}
+  p_Y(y; \mu)
+  &= \prod_{i=1}^n \frac{1}{\sqrt{2\pi} \sigma} \exp\left\{ -\frac{1}2
+    \frac{(y_i - \mu)^2}{\sigma^2} \right\} \\
+  &= \left( \frac{1}{\sqrt{2 \pi} \sigma} \right)^n \times
+    \exp\left\{ -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i - \mu)^2 \right\} \\
+  &= \left( \frac{1}{\sqrt{2\pi} \sigma} \right)^n \times
+    \exp\left\{ -\frac{1}{2\sigma^2} \sum_{i=1}^n (y_i^2 + \mu^2 -2\mu y_i) \right\} \\
+  &= \left( \frac{1}{\sqrt{2\pi} \sigma} \right)^n \times
+    \exp\left\{ -\frac{1}{2\sigma^2} \sum_{i=1}^n y_i^2 - \frac{n \mu^2}{2\sigma^2} + \frac{\mu}{\sigma^2} \sum_{i=1}^n y_i \right\} \\
+  &= \explain{
+    \left( \frac{1}{\sqrt{2\pi} \sigma} \right)^n \times \exp\left\{
+    -\frac{1}{2\sigma^2} \sum_{i=1}^n y_i^2\right\}
+    }{che chiameremo \(h(y)\) per semplicità dato che non dipende da \(\mu\)}
+    \times
+    \explain{
+    \exp\left\{  - \frac{n \mu^2}{2\sigma^2} + \frac{\mu}{\sigma^2} \sum_{i=1}^n y_i\right\}
+    }{che chiameremo \(g(\cdot, \mu)\) dato che dipende da \(\mu\)} \\
+  &= h(y) \times g\left( \sum_{i=1}^n y_i; \mu \right)
+\end{align*}
+
+L'informazione portata su \(\mu\) dalla statistica somma è
+equivalentemente portata dalla statistica media campionaria
+\(\bar{y}_n = \sfrac{s_n}{n}\) analogo empirico di \(\E(Y)\).  La
+distribuzione campionaria della statistica media campionaria è
+\[
+  \bar{Y}_n \sim N\left( \mu, \: \frac{\sigma^2}{n} \right) .
+\]
 
 \end{document}
 

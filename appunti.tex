@@ -874,7 +874,7 @@ e pertanto
 \paragraph{Proprietà additiva}
 Sia \(X = (X_1, \dots, X_d)\) una v.c.\ multivariata con componenti
 \(X_i\) indipendenti e legge marginale \(X_i \sim P(\lambda_i)\) dove
-\(lambda_i > 0\) per \(i = 1, \dots, n\)
+\(\lambda_i > 0\) per \(i = 1, \dots, n\)
 \[
   M_{X_i}(t) = e^{\lambda_i (e^t -1)}
 \]
@@ -1072,7 +1072,10 @@ parametro \(\lambda\). Per un tempo d'attesa esponenziale,
   M_X(t) = \E(e^{tX})
   &= \int_0^{+\infty} e^{tx} \lambda e^{-\lambda x} \dx \\
   &= \lambda \int_0^{+\infty} e^{-(\lambda - t)x} \dx \\
-  &= \frac{\lambda}{\lambda - t} \int_0^{+\infty} (\lambda -t)e^{-(\lambda -t)}x \dx \\
+  &= \lambda \times \frac{\lambda -t}{\lambda -t} \int_0^{+\infty} e^{-(\lambda - t)x} \dx \\
+  &= \frac{\lambda}{\lambda - t}
+    \explain{\int_0^{+\infty} (\lambda -t)e^{-(\lambda -t)}x \dx}
+    {ovvero la f.d.p\ della legge \(Esp(\lambda -t)\) che per la normalizzazione vale 1}\\
   &= \frac{\lambda}{\lambda -t}
 \end{align*}
 da cui

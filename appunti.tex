@@ -419,6 +419,13 @@ Sia \(X\) una v.c.\ univariata con legge discreta e supporto finito.
 Si possono cogliere aspetti importanti della distribuzione di \(X\)
 attraverso indici sintetici.
 
+\begin{definition}[Indice di variabilità]
+  Un indice di variabilità di una v.c.\ univariata \(X\) è una
+  predizione di quanto disterà il valore futuro di \(X\) da una sua
+  particolare predizione puntuale, quindi in sostanza un indice di
+  prevedibilità di \(X\).
+\end{definition}
+
 \subsection{Varianza}
 L'indice di variabilità principale, la varianza di \(X\), è definito
 come la media aritmetica ponderata del quadrato degli scarti di \(X\)
@@ -853,7 +860,7 @@ sufficientemente grande.
 \end{align*}
 da cui
 \begin{align*}
-  M_X'(t) &= e^{\lambda (e^t -1) \lambda e^t} \Longrightarrow \E(X) =
+  M_X'(t) &= e^{\lambda (e^t -1)} \lambda e^t \Longrightarrow \E(X) =
             M_X'(0) = \lambda \\
   M_X''(t) &= e^{\lambda (e^t -1)} \lambda^2 e^{2t} + e^{\lambda (e^t
              -1)}\lambda e^t \Longrightarrow \E(X^2) = M_X''(0) =
